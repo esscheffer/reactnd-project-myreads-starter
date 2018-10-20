@@ -1,8 +1,36 @@
 import React, {Component} from 'react';
 import {Link} from "react-router-dom";
+import * as BooksAPI from "../BooksAPI";
+import Book from "../Book";
 
 class Search extends Component {
-    state = {};
+    state = {
+        query: '',
+        foundBooks: []
+    };
+
+    searchBooks = (query) => {
+        if (query) {
+            BooksAPI.search(query).then(books => {
+                if (!books.error) {
+                    books.forEach(book => book.shelf = "none");
+                    this.setState({
+                        foundBooks: books
+                    });
+                } else {
+                    this.setState({
+                        foundBooks: []
+                    });
+                }
+            })
+        }
+    };
+
+    finterOutShelfBooks = () => {
+        return this.state.foundBooks.filter(
+            (foundBook) => !this.props.currentBooks.some((currentBook) => currentBook.id === foundBook.id)
+        );
+    };
 
     render() {
         return (
@@ -18,12 +46,17 @@ class Search extends Component {
                   However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
                   you don't find a specific author or title. Every search is limited by search terms.
                 */}
-                        <input type="text" placeholder="Search by title or author"/>
+                        <input type="text"
+                               placeholder="Search by title or author"
+                               onChange={(e) => this.searchBooks(e.target.value)}/>
 
                     </div>
                 </div>
                 <div className="search-books-results">
                     <ol className="books-grid"/>
+                    {this.finterOutShelfBooks().map((book) => (
+                        <Book key={book.id} book={book} changeBookShelf={this.props.changeBookShelf}/>
+                    ))}
                 </div>
             </div>
         );

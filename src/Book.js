@@ -9,7 +9,7 @@ const Book = props => {
                     <div className="book-cover" style={{
                         width: 128,
                         height: 193,
-                        backgroundImage: `url("${book.imageLinks.smallThumbnail}")`
+                        backgroundImage: `url("${book.imageLinks && book.imageLinks.smallThumbnail}")`
                     }}/>
 
                     <div className="book-shelf-changer">
@@ -23,7 +23,7 @@ const Book = props => {
                     </div>
                 </div>
                 <div className="book-title">{book.title}</div>
-                <div className="book-authors">{book.authors.join(", ")}</div>
+                <div className="book-authors">{book.authors ? book.authors.join(", ") : ''}</div>
             </div>
         </li>
     );

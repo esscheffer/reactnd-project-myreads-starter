@@ -19,8 +19,20 @@ class BooksApp extends React.Component {
     }
 
     changeBookShelf = (bookToMove, destinyShelf) => {
-        bookToMove.shelf = destinyShelf;
-        this.setState((oldState) => oldState.books.filter((book) => bookToMove.id === book.id).concat(bookToMove));
+        BooksAPI.update(bookToMove, destinyShelf).then(() => {
+                bookToMove.shelf = destinyShelf;
+                this.setState(
+                    oldState => {
+                        let newListOfBooks = oldState.books.filter((book) => bookToMove.id !== book.id);
+                        if (destinyShelf !== "none") {
+                            newListOfBooks = newListOfBooks.concat(bookToMove);
+                        }
+
+                        return {books: newListOfBooks}
+                    }
+                );
+            }
+        );
     };
 
     filterByShelf = (shelf) => {
@@ -32,7 +44,7 @@ class BooksApp extends React.Component {
         return (
             <div className="app">
                 <Route path="/search" render={() => (
-                    <Search/>
+                    <Search currentBooks={this.state.books} changeBookShelf={this.changeBookShelf}/>
                 )}/>
                 <Route exact path="/" render={() => (
                     <div className="list-books">
@@ -53,7 +65,7 @@ class BooksApp extends React.Component {
                             </div>
                         </div>
                         <div className="open-search">
-                            <Link to="/search" />
+                            <Link to="/search"/>
                         </div>
                     </div>
                 )}/>
