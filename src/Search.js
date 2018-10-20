@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Link} from "react-router-dom";
-import * as BooksAPI from "../BooksAPI";
-import Book from "../Book";
+import * as BooksAPI from "./BooksAPI";
+import Book from "./Book";
 
 class Search extends Component {
     state = {
@@ -26,7 +26,8 @@ class Search extends Component {
         }
     };
 
-    finterOutShelfBooks = () => {
+    // Don't show books that are already on some shelf
+    filterOutShelfBooks = () => {
         return this.state.foundBooks.filter(
             (foundBook) => !this.props.currentBooks.some((currentBook) => currentBook.id === foundBook.id)
         );
@@ -54,7 +55,7 @@ class Search extends Component {
                 </div>
                 <div className="search-books-results">
                     <ol className="books-grid"/>
-                    {this.finterOutShelfBooks().map((book) => (
+                    {this.filterOutShelfBooks().map((book) => (
                         <Book key={book.id} book={book} changeBookShelf={this.props.changeBookShelf}/>
                     ))}
                 </div>

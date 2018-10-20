@@ -3,7 +3,7 @@ import * as BooksAPI from './BooksAPI'
 import './App.css'
 import Bookshelf from "./Bookshelf";
 import {Link, Route} from 'react-router-dom';
-import Search from "./icons/Search";
+import Search from "./Search";
 
 class BooksApp extends React.Component {
     state = {
@@ -23,7 +23,9 @@ class BooksApp extends React.Component {
                 bookToMove.shelf = destinyShelf;
                 this.setState(
                     oldState => {
+                        // Remove moved book from list
                         let newListOfBooks = oldState.books.filter((book) => bookToMove.id !== book.id);
+                        // If the book goes to some shelf, add it again to the list with the new shelf
                         if (destinyShelf !== "none") {
                             newListOfBooks = newListOfBooks.concat(bookToMove);
                         }
