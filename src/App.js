@@ -4,16 +4,20 @@ import './App.css'
 import Bookshelf from "./Bookshelf";
 import {Link, Route} from 'react-router-dom';
 import Search from "./Search";
+import {ProgressSpinner} from 'primereact/progressspinner';
 
 class BooksApp extends React.Component {
     state = {
-        books: []
+        books: [],
+        loading: false
     };
 
     componentDidMount() {
+        this.setState({loading: true});
         BooksAPI.getAll().then((books) => {
             this.setState({
-                books: books
+                books: books,
+                loading: false
             })
         });
     }
@@ -48,29 +52,31 @@ class BooksApp extends React.Component {
                 <Route path="/search" render={() => (
                     <Search currentBooks={this.state.books} changeBookShelf={this.changeBookShelf}/>
                 )}/>
-                <Route exact path="/" render={() => (
-                    <div className="list-books">
-                        <div className="list-books-title">
-                            <h1>MyReads</h1>
-                        </div>
-                        <div className="list-books-content">
-                            <div>
-                                <Bookshelf bookshelfBooks={this.filterByShelf("currentlyReading")}
-                                           bookshelfTitle="Currently Reading"
-                                           changeBookShelf={this.changeBookShelf}/>
-                                <Bookshelf bookshelfBooks={this.filterByShelf("wantToRead")}
-                                           bookshelfTitle="Want to Read"
-                                           changeBookShelf={this.changeBookShelf}/>
-                                <Bookshelf bookshelfBooks={this.filterByShelf("read")}
-                                           bookshelfTitle="Read"
-                                           changeBookShelf={this.changeBookShelf}/>
+                <Route exact path="/" render={() => {
+                    return this.state.loading ?
+                        <ProgressSpinner/> :
+                        <div className="list-books">
+                            <div className="list-books-title">
+                                <h1>MyReads</h1>
+                            </div>
+                            <div className="list-books-content">
+                                <div>
+                                    <Bookshelf bookshelfBooks={this.filterByShelf("currentlyReading")}
+                                               bookshelfTitle="Currently Reading"
+                                               changeBookShelf={this.changeBookShelf}/>
+                                    <Bookshelf bookshelfBooks={this.filterByShelf("wantToRead")}
+                                               bookshelfTitle="Want to Read"
+                                               changeBookShelf={this.changeBookShelf}/>
+                                    <Bookshelf bookshelfBooks={this.filterByShelf("read")}
+                                               bookshelfTitle="Read"
+                                               changeBookShelf={this.changeBookShelf}/>
+                                </div>
+                            </div>
+                            <div className="open-search">
+                                <Link to="/search"/>
                             </div>
                         </div>
-                        <div className="open-search">
-                            <Link to="/search"/>
-                        </div>
-                    </div>
-                )}/>
+                }}/>
             </div>
         )
     }

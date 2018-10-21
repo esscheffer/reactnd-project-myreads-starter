@@ -54,11 +54,14 @@ class Search extends Component {
                     </div>
                 </div>
                 <div className="search-books-results">
-                    <ol className="books-grid">
-                        {this.filterOutShelfBooks().map((book) => (
-                            <Book key={book.id} book={book} changeBookShelf={this.props.changeBookShelf}/>
-                        ))}
-                    </ol>
+                    {this.state.foundBooks.length === 0 ?
+                        <h1>No books found</h1> :
+                        <ol className="books-grid">
+                            {this.filterOutShelfBooks().map((book) => (
+                                <Book key={book.id} book={book} changeBookShelf={this.props.changeBookShelf}/>
+                            ))}
+                        </ol>
+                    }
                 </div>
             </div>
         );
