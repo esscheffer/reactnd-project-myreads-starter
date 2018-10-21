@@ -13,7 +13,16 @@ class Search extends Component {
         if (query) {
             BooksAPI.search(query).then(books => {
                 if (!books.error) {
-                    books.forEach(book => book.shelf = "none");
+                    books.forEach(book => {
+                        let shelfBook = this.props.currentBooks.find(shelfBook => shelfBook.id === book.id);
+                        // If the book is already on a shelf, set that shelf to the found book
+                        if (shelfBook) {
+                            book.shelf = shelfBook.shelf;
+                        } else {
+                            // Set the book to no shelf otherwise
+                            book.shelf = "none"
+                        }
+                    });
                     this.setState({
                         foundBooks: books
                     });
@@ -24,13 +33,6 @@ class Search extends Component {
                 }
             })
         }
-    };
-
-    // Don't show books that are already on some shelf
-    filterOutShelfBooks = () => {
-        return this.state.foundBooks.filter(
-            (foundBook) => !this.props.currentBooks.some((currentBook) => currentBook.id === foundBook.id)
-        );
     };
 
     render() {
@@ -57,7 +59,7 @@ class Search extends Component {
                     {this.state.foundBooks.length === 0 ?
                         <h1>No books found</h1> :
                         <ol className="books-grid">
-                            {this.filterOutShelfBooks().map((book) => (
+                            {this.state.foundBooks.map((book) => (
                                 <Book key={book.id} book={book} changeBookShelf={this.props.changeBookShelf}/>
                             ))}
                         </ol>
